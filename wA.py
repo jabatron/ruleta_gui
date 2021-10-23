@@ -119,6 +119,8 @@ def main():
 
     messenger = w.WhatsApp()
 
+    t1 = time()
+
     for i in range (2, sheet.max_row + 1):
         cell_numero  = 'A' + str(i)
         cell_mensaje = 'B' + str(i)
@@ -131,15 +133,18 @@ def main():
         fichero = sheet[cell_fichero].value
         qsoy    = sheet[cell_qsoy].value
         
-        if qsoy != args.q:
+        
+        if qsoy != args.q and args.q != None :
             print (f"no soy yo {qsoy}")
             continue
-
+        
+               
         if pattern.fullmatch(numero):
             
             if enviar_contraseña:
 
                 if not args.d:
+                    messenger.find_user(numero)
                     messenger.send_message(f'Enviando contraseña: {mensaje} al numero {numero}')
 
                 print (f'Enviando contraseña: {mensaje} al numero {numero}')
@@ -181,7 +186,9 @@ def main():
                 wb.save(file)
 
         #print (numero, mensaje, fichero)
-    
+    t2 = time()
+
+    print (f'{t2-t1}')
 
 if __name__=='__main__':
     main ()
