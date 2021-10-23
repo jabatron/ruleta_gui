@@ -1,195 +1,187 @@
-"""
-Alright is unofficial Python wrapper for whatsapp web made as an inspiration from PyWhatsApp
-allowing you to send messages, images, video and documents programmatically using Python 
-"""
-
-
-import os
-import time
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import UnexpectedAlertPresentException
-
-
-class WhatsApp(object):
-    def __init__(self):
-        self.BASE_URL = 'https://web.whatsapp.com/'
-        self.suffix_link = 'https://wa.me/'
-        chrome_options = Options()
-        chrome_options.add_argument("start-maximized")
-        #chrome_options.add_argument('--user-data-dir=./User_Data')
-        self.browser = webdriver.Chrome(options=chrome_options)
-        self.wait = WebDriverWait(self.browser, 600)
-        self.login()
-        self.mobile = ''
-
-    def login(self):
-        self.browser.get(self.BASE_URL)
-        #self.browser.maximize_window()
-
-    def get_phone_link(self, mobile) -> str:
-        """get_phone_link (), create a link based on whatsapp (wa.me) api
-
-        Args:
-            mobile ([type]): [description]
-
-        Returns:
-            str: [description]
-        """
-        return f'{self.suffix_link}{mobile}'
-
-    def find_user(self, mobile) -> None:
-        """find_user()
-        Makes a user with a given mobile a current target for the wrapper
-
-        Args:
-            mobile ([type]): [description]
-        """
-        try:
-            self.mobile = mobile
-            link = self.get_phone_link(mobile)
-            self.browser.get(link)
-            action_button = self.wait.until(EC.presence_of_element_located(
-                (By.XPATH, '//*[@id="action-button"]')))
-            action_button.click()
-            time.sleep(2)
-            go_to_web = self.wait.until(EC.presence_of_element_located(
-                (By.XPATH, '//*[@id="fallback_block"]/div/div/a')))
-            go_to_web.click()
-            time.sleep(1)
-        except UnexpectedAlertPresentException as bug:
-            print(bug)
-            time.sleep(1)
-            self.find_user(mobile)
-
-    def send_message(self, message):
-        """send_message ()
-        Sends a message to a target user 
-
-        Args:
-            message ([type]): [description]
-        """
-        try:
-            inp_xpath = '//*[@id="main"]/footer/div[1]/div/div/div[2]/div[1]/div/div[2]'
-            input_box = self.wait.until(
-                EC.presence_of_element_located((By.XPATH, inp_xpath)))
-            input_box.send_keys(message + Keys.ENTER)
-            print(f"Message sent successfuly to {self.mobile}")
-        except (NoSuchElementException, Exception) as bug:
-            print(bug)
-            print(f'Failed to send a PDF to {self.mobile}')
-
-        finally:
-            print("send_message() finished running ")
-
-    def find_attachment(self):
-        clipButton = self.wait.until(EC.presence_of_element_located(
-            (By.XPATH,
-             '//*[@id="main"]/footer//*[@data-icon="clip"]/..')))
-        clipButton.click()
-
-    def send_attachment(self):
-        # Waiting for the pending clock icon to disappear
-        self.wait.until_not(EC.presence_of_element_located(
-            (By.XPATH, '//*[@id="main"]//*[@data-icon="msg-time"]')))
-
-        sendButton = self.wait.until(EC.presence_of_element_located(
-            (By.XPATH, '//*[@id="app"]/div[1]/div[1]/div[2]/div[2]/span/div[1]/span/div[1]/div/div[2]/span/div/div')))
-        sendButton.click()
-
-    def send_picture(self, picture):
-        """send_picture ()
-
-        Sends a picture to a target user
-
-        Args:
-            picture ([type]): [description]
-        """
-        try:
-            filename = os.path.realpath(picture)
-            self.find_attachment()
-            # To send an Image
-            imgButton = self.wait.until(EC.presence_of_element_located(
-                (By.XPATH, '//*[@id="main"]/footer//*[@data-icon="attach-image"]/../input')))
-            imgButton.send_keys(filename)
-            self.send_attachment()
-            print(f"Picture has been successfully sent to {self.mobile}")
-        except (NoSuchElementException, Exception) as bug:
-            print(bug)
-            print(f'Failed to send a picture to {self.mobile}')
-
-        finally:
-            print("send_picture() finished running ")
-
-    def send_video(self, video):
-        """send_video ()
-
-        Sends a video to a target user
-
-        Args:
-            video ([type]): [description]
-        """
-        try:
-            filename = os.path.realpath(video)
-            self.find_attachment()
-            # To send a Video
-            video_button = self.wait.until(EC.presence_of_element_located(
-                (By.XPATH, '//*[@id="main"]/footer//*[@data-icon="attach-image"]/../input')))
-            video_button.send_keys(filename)
-            self.send_attachment()
-            print(f'Video has been successfully sent to {self.mobile}')
-        except (NoSuchElementException, Exception) as bug:
-            print(bug)
-            print(f'Failed to send a video to {self.mobile}')
-        finally:
-            print("send_video() finished running ")
-
-    def send_file(self, filename):
-        """send_file()
-
-        Sends a file to target user
-
-        Args:
-            filename ([type]): [description]
-        """
-        try:
-            filename = os.path.realpath(filename)
-            self.find_attachment()
-            document_button = self.wait.until(EC.presence_of_element_located(
-                (By.XPATH, '//*[@id="main"]/footer//*[@data-icon="attach-document"]/../input')))
-            document_button.send_keys(filename)
-            self.send_attachment()
-        except (NoSuchElementException, Exception) as bug:
-            print(bug)
-            print(f'Failed to send a PDF to {self.mobile}')
-        finally:
-            print("send_file() finished running ")
-
-    def __del__(self):
-        self.browser.quit()
-messenger = WhatsApp()
-
+from openpyxl.workbook import workbook
+import whatsapp as w
+from datetime import datetime
 from openpyxl import load_workbook
-wb = load_workbook(('m2.xlsx'))
-sheet = wb.active
+from openpyxl.styles import colors
+from openpyxl.styles import Font, Color
+from time import time
+from time import sleep
+import re
+import argparse
+import os.path
 
 
-for i in range (2, sheet.max_row + 1):
-    cell_numero =  'A' + str(i)
-    cell_mensaje = 'B' + str(i)
-    numero = str(sheet[cell_numero].value)[1:]
-    mensaje = sheet[cell_mensaje].value
-    print (numero, mensaje)
+def unsolonumero (sheet):
+    messenger = w.WhatsApp()
+    print (f"1.- envio de 10 mensajes al mismo número")
 
-    messenger.find_user(numero)
+    una_vez = True
+    time_star=time()
+    
+    for i in range (2, sheet.max_row + 1):
+        cell_numero =  'A' + str(i)
+        cell_mensaje = 'B' + str(i)
+        numero = str(sheet[cell_numero].value)[:-2]
+        mensaje = sheet[cell_mensaje].value
+        print (numero, mensaje)
 
-    messenger.send_message(f'Enviando mensaje: {mensaje} al numero {numero}')
+        if una_vez:
+            pattern = re.compile("^34\d{9}")
+            if pattern.fullmatch(numero):
+                print (f'el numero {pattern} es correcto')
+            else:
+                print (f'el numero {pattern} es incorrecto')
+                break
+     
+            una_vez = False
+            messenger.find_user(numero)
+
+        messenger.send_message(f'Enviando mensaje: {mensaje} al numero {numero}')
+
+    time_end=time()
+
+    messenger.send_message(("FIN"))
+    messenger.send_message(f"Tiempo ejecuación: {time_end-time_star}")
+
+    print(f"Tiempo ejecuación: {time_end-time_star}")
+    sleep(5)
+    del messenger
 
 
-del messenger
+def multiplesnumeros ():
+    messenger = w.WhatsApp()
+    print (f"2.- envio de 10 mensajes al mismo número")
+
+    una_vez = True
+
+    for i in range (2, sheet.max_row + 1):
+        if una_vez:
+            time_star=time()
+            una_vez = False
+
+        cell_numero =  'A' + str(i)
+        cell_mensaje = 'B' + str(i)
+        numero = str(sheet[cell_numero].value)[:-2]
+        mensaje = sheet[cell_mensaje].value
+        print (numero, mensaje)
+        messenger.find_user(numero)
+
+        messenger.send_message(f'Enviando mensaje: {mensaje} al numero {numero}')
+
+    time_end=time()
+
+    messenger.send_message(("FIN"))
+    messenger.send_message(f"Tiempo ejecuación: {time_end-time_star}")
+
+    print(f"Tiempo ejecuación: {time_end-time_star}")
+    sleep(5)
+    del messenger
+
+def chek_file(file):
+    try:
+        libro = load_workbook(file)
+        return file
+    except:
+        msg = f'{file} No existe o no es Excel.'
+        raise argparse.ArgumentTypeError(msg)
+
+
+def main():
+    
+    parser = argparse.ArgumentParser (description="Envio de mensajes por WhastApp/web", epilog="@jabaselga")
+    
+    parser.add_argument("-f", metavar="moviles.xlsx", help="Fichero de Excel con los datos.", type=chek_file)
+    parser.add_argument("-p", help="Enviar contraseña", action="store_true")
+    parser.add_argument("-s", help="Enviar imagen/video/fichero", action="store_true")
+    parser.add_argument("-q", metavar="string", help="Quien soy")
+    parser.add_argument("-d", help="Simulación, no enviar mensajes ni archivos", action="store_true")
+    parser.add_argument("-v", help="Extra info", action="store_true")
+    
+    args = parser.parse_args()   
+    
+    if not (args.p or args.s):
+        parser.error('Ninguna tarea por hacer.')
+
+    enviar_contraseña = args.p
+    enviar_fichero = args.s
+
+    if args.f:
+        file = args.f
+    else:
+        file = 'moviles.xlsx'
+
+    # Abrir excel
+    wb = load_workbook(file)
+    sheet = wb.active
+
+    #unsolonumero(sheet)
+    #multiplesnumeros()
+
+    messenger = w.WhatsApp()
+
+    for i in range (2, sheet.max_row + 1):
+        cell_numero  = 'A' + str(i)
+        cell_mensaje = 'B' + str(i)
+        cell_fichero = 'C' + str(i)
+        cell_qsoy    = 'D' + str(i)
+        cell_status  = 'G' + str(i)
+        numero  = '34' + str(sheet[cell_numero].value)[:]
+        pattern = re.compile("^34\d{9}")
+        mensaje = sheet[cell_mensaje].value
+        fichero = sheet[cell_fichero].value
+        qsoy    = sheet[cell_qsoy].value
+        
+        if qsoy != args.q:
+            print (f"no soy yo {qsoy}")
+            continue
+
+        if pattern.fullmatch(numero):
+            
+            if enviar_contraseña:
+
+                if not args.d:
+                    messenger.send_message(f'Enviando contraseña: {mensaje} al numero {numero}')
+
+                print (f'Enviando contraseña: {mensaje} al numero {numero}')
+
+            if enviar_fichero:
+                # comprobar si ha fichero para enviar y existe
+                # sacar tipo de fichero
+                # enviar segun tipo de fichero
+                #messenger.send_message(f'Enviando mensaje: {mensaje} al numero {numero}')
+                if fichero and os.path.isfile(fichero):
+                    
+                    name, ext = os.path.splitext(fichero)
+                    
+                    if not args.d:
+                        messenger.find_user(numero)
+                    
+                    if ext in [".tiff", ".pjp", ".jfif", ".gif", ".svg", ".bmp", ".png", ".jpeg", ".svgz", ".jpg", ".webp", ".ico", ".xbm", ".dib", ".tif", ".pjpeg", ".avif", ".m4v", ".mp4", ".3gpp", ".mov"]:
+                        if not args.d:
+                            messenger.send_picture(fichero)
+                        print (f'Enviando imagen/video {fichero} al número: {numero}')
+                    else:
+                        if not args.d:
+                            messenger.send_file(fichero)
+                        print (f'Enviando fichero {fichero} al número: {numero}')
+                else:
+                    print (f'No hay fichero pare enviar al numero {numero}')
+
+            sheet[cell_status].font = Font(color="00F000")
+            sheet[cell_status] = 'Enviado'
+            if not args.d:
+                wb.save(file)
+
+        else:
+            print (f'el numero {numero} es incorrecto')
+            sheet[cell_status].font = Font(color="FF0000")
+            sheet[cell_numero].font = Font(color="FF0000")
+            sheet[cell_status] = 'ERROR'
+            if not args.d:
+                wb.save(file)
+
+        #print (numero, mensaje, fichero)
+    
+
+if __name__=='__main__':
+    main ()
