@@ -184,6 +184,7 @@ def main():
                 wb.save(file)
 
         #print (numero, mensaje, fichero)
+    sleep(2)
     t2 = time()
 
     print (f'El proceso ha durado {t2-t1} segundos.')
