@@ -6,120 +6,24 @@ from openpyxl.styles import colors
 from openpyxl.styles import Font, Color
 from time import time
 from time import sleep
+import gspread
 import re
 import argparse
 import os.path
 
-
-def unsolonumero (sheet):
-    messenger = w.WhatsApp()
-    print (f"1.- envio de 10 mensajes al mismo número")
-
-    una_vez = True
-    time_star=time()
-    
-    for i in range (2, sheet.max_row + 1):
-        cell_numero =  'A' + str(i)
-        cell_mensaje = 'B' + str(i)
-        numero = str(sheet[cell_numero].value)[:-2]
-        mensaje = sheet[cell_mensaje].value
-        print (numero, mensaje)
-
-        if una_vez:
-            pattern = re.compile("^34\d{9}")
-            if pattern.fullmatch(numero):
-                print (f'el numero {pattern} es correcto')
-            else:
-                print (f'el numero {pattern} es incorrecto')
-                break
-     
-            una_vez = False
-            messenger.find_user(numero)
-
-        messenger.send_message(f'Enviando mensaje: {mensaje} al numero {numero}')
-
-    time_end=time()
-
-    messenger.send_message(("FIN"))
-    messenger.send_message(f"Tiempo ejecuación: {time_end-time_star}")
-
-    print(f"Tiempo ejecuación: {time_end-time_star}")
-    sleep(5)
-    del messenger
-
-
-def multiplesnumeros ():
-    messenger = w.WhatsApp()
-    print (f"2.- envio de 10 mensajes al mismo número")
-
-    una_vez = True
-
-    for i in range (2, sheet.max_row + 1):
-        if una_vez:
-            time_star=time()
-            una_vez = False
-
-        cell_numero =  'A' + str(i)
-        cell_mensaje = 'B' + str(i)
-        numero = str(sheet[cell_numero].value)[:-2]
-        mensaje = sheet[cell_mensaje].value
-        print (numero, mensaje)
-        messenger.find_user(numero)
-
-        messenger.send_message(f'Enviando mensaje: {mensaje} al numero {numero}')
-
-    time_end=time()
-
-    messenger.send_message(("FIN"))
-    messenger.send_message(f"Tiempo ejecuación: {time_end-time_star}")
-
-    print(f"Tiempo ejecuación: {time_end-time_star}")
-    sleep(5)
-    del messenger
-
-def chek_file(file):
-    try:
-        libro = load_workbook(file)
-        return file
-    except:
-        msg = f'{file} No existe o no es Excel.'
-        raise argparse.ArgumentTypeError(msg)
-
-
-def main():
-    
-    parser = argparse.ArgumentParser (description="Envio de mensajes por WhastApp/web", epilog="@jabaselga")
-    
-    parser.add_argument("-f", metavar="moviles.xlsx", help="Fichero de Excel con los datos.", type=chek_file)
-    parser.add_argument("-m", help="Enviar mensaje", action="store_true")
-    parser.add_argument("-s", help="Enviar imagen/video/fichero", action="store_true")
-    parser.add_argument("-q", metavar="string", help="Quien soy")
-    parser.add_argument("-d", help="Simulación, no enviar mensajes ni archivos", action="store_true")
-    parser.add_argument("-v", help="Extra info", action="store_true")
-    
-    args = parser.parse_args()   
-    
-    if not (args.m or args.s):
-        parser.error('Ninguna tarea por hacer.')
-
+def enviar_xls(messenger, args):
+ 
+    # Abrir excel
+    wb = load_workbook(file)
+    sheet = wb.active
+ 
+    # Procesar argumentos
     enviar_mensaje = args.m
     enviar_fichero = args.s
-
     if args.f:
         file = args.f
     else:
         file = 'moviles.xlsx'
-
-    # Abrir excel
-    wb = load_workbook(file)
-    sheet = wb.active
-
-    #unsolonumero(sheet)
-    #multiplesnumeros()
-
-    messenger = w.WhatsApp()
-
-    t1 = time()
 
     for i in range (2, sheet.max_row + 1):
         cell_numero  = 'A' + str(i)
@@ -183,8 +87,101 @@ def main():
             if not args.d:
                 wb.save(file)
 
-        #print (numero, mensaje, fichero)
-    sleep(2)
+def enviar_google(messenger, args):
+
+    # Abrir gooogle sheet
+    gc = gspread.service_account(filename="credentials/ruleta-gui-credentials.json")
+    key = open("credentials/key-mobiles.txt").read()
+    sh = gc.open_by_key(key)
+    # Los datos siempre van a estar en la primera hoja
+    worksheet = sh.sheet1
+    data = worksheet.get_all_values()
+    #Leer cabeceras que no necesitamos para nada 
+    cabeceras = data.pop(0)
+
+    # Procesar argumentos
+    enviar_mensaje = args.m
+    enviar_fichero = args.s
+
+    for d in data:
+        numero, mensaje, fichero, qsoy, *_ = d
+        numero = '34' + numero
+        pattern = re.compile("^34\d{9}")
+   
+        if qsoy != args.q and args.q != None :
+            print (f"no soy yo {qsoy}")
+            continue
+                   
+        if pattern.fullmatch(numero):    
+            if enviar_mensaje:
+                if not args.d:
+                    messenger.find_user(numero)
+                    messenger.send_message(f'Enviando mensaje: -{mensaje}- al numero {numero}')
+
+                print (f'Enviando mensaje: -{mensaje}- al numero {numero}')
+
+            if enviar_fichero:
+                # comprobar si ha fichero para enviar y existe
+                # sacar tipo de fichero
+                # enviar segun tipo de fichero
+                if fichero and os.path.isfile(fichero): 
+                    name, ext = os.path.splitext(fichero)
+                    
+                    if not args.d:
+                        messenger.find_user(numero)
+                    
+                    if ext in [".tiff", ".pjp", ".jfif", ".gif", ".svg", ".bmp", ".png", ".jpeg", ".svgz", ".jpg", ".webp", ".ico", ".xbm", ".dib", ".tif", ".pjpeg", ".avif", ".m4v", ".mp4", ".3gpp", ".mov"]:
+                        if not args.d:
+                            messenger.send_picture(fichero)
+                        print (f'Enviando imagen/video {fichero} al número: {numero}')
+                    else:
+                        if not args.d:
+                            messenger.send_file(fichero)
+                        print (f'Enviando fichero {fichero} al número: {numero}')
+                else:
+                    print (f'No hay fichero pare enviar al numero {numero}')
+
+        else:
+            print (f'el numero {numero} es incorrecto')
+
+def check_file(file):
+    try:
+        libro = load_workbook(file)
+        return file
+    except:
+        msg = f'{file} No existe o no es Excel.'
+        raise argparse.ArgumentTypeError(msg)
+
+
+def main():
+    
+    parser = argparse.ArgumentParser (description="Envio de mensajes por WhastApp/web", epilog="@jabaselga")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("-f",  metavar="moviles.xlsx", help="Fichero de Excel con los datos.", type=check_file)
+    group.add_argument("-g",  help="Fichero de Excel con los datos.", action="store_true")
+    parser.add_argument("-m", help="Enviar mensaje", action="store_true")
+    parser.add_argument("-s", help="Enviar imagen/video/fichero", action="store_true")
+    parser.add_argument("-q", metavar="string", help="Quien soy")
+    parser.add_argument("-d", help="Simulación, no enviar mensajes ni archivos", action="store_true")
+    parser.add_argument("-v", help="Extra info", action="store_true")
+    
+    args = parser.parse_args()   
+    
+    if not (args.m or args.s):
+        parser.error('Ninguna tarea por hacer sleccione "-m" y/o "-s"')
+
+    messenger = w.WhatsApp()
+
+    t1 = time()
+
+    if args.g:
+        enviar_google(messenger, args)
+    else:
+        enviar_xls(messenger, args)
+
+
+    # Añado un delay para asegurarme que ee han enviado todos los mensajes    
+    sleep(3)
     t2 = time()
 
     print (f'El proceso ha durado {t2-t1} segundos.')
