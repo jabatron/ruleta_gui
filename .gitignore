@@ -131,3 +131,5 @@ Scripts/activate
 google sheet.ipynb
 .gitignore
 .gitignore
+requiriments.txt
+credentials/key-mobiles.txt
