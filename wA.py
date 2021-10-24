@@ -103,7 +103,7 @@ def enviar_google(messenger, args):
     enviar_mensaje = args.m
     enviar_fichero = args.s
 
-    for d in data:
+    for i, d in enumerate(data, 2):
         numero, mensaje, fichero, qsoy, *_ = d
         numero = '34' + numero
         pattern = re.compile("^34\d{9}")
@@ -117,6 +117,8 @@ def enviar_google(messenger, args):
                 if not args.d:
                     messenger.find_user(numero)
                     messenger.send_message(f'Enviando mensaje: -{mensaje}- al numero {numero}')
+                    worksheet.update('G' + str(i), 'Mensaje Enviado')
+                    worksheet.format('G' + str(i), {"textFormat": {"foregroundColor": {"red": 0.0, "green": 75.0, "blue": 0.0}}})
 
                 print (f'Enviando mensaje: -{mensaje}- al numero {numero}')
 
@@ -133,15 +135,21 @@ def enviar_google(messenger, args):
                     if ext in [".tiff", ".pjp", ".jfif", ".gif", ".svg", ".bmp", ".png", ".jpeg", ".svgz", ".jpg", ".webp", ".ico", ".xbm", ".dib", ".tif", ".pjpeg", ".avif", ".m4v", ".mp4", ".3gpp", ".mov"]:
                         if not args.d:
                             messenger.send_picture(fichero)
+                            worksheet.update('H' + str(i), 'Imagen/Video Enviado')
+                            worksheet.format('H' + str(i), {"textFormat": {"foregroundColor": {"red": 0.0, "green": 75.0, "blue": 0.0}}})
                         print (f'Enviando imagen/video {fichero} al número: {numero}')
                     else:
                         if not args.d:
                             messenger.send_file(fichero)
+                            worksheet.update('H' + str(i), 'Fichero Enviado')
+                            worksheet.format('H' + str(i), {"textFormat": {"foregroundColor": {"red": 0.0, "green": 75.0, "blue": 0.0}}})
                         print (f'Enviando fichero {fichero} al número: {numero}')
                 else:
                     print (f'No hay fichero pare enviar al numero {numero}')
 
         else:
+            worksheet.update('G' + str(i), 'No Enviado')
+            worksheet.format('G' + str(i), {"textFormat": {"foregroundColor": {"red": 50.0, "green": 0.0, "blue": 0.0}}})
             print (f'el numero {numero} es incorrecto')
 
 def check_file(file):
