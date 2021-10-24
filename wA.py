@@ -91,7 +91,7 @@ def main():
     parser = argparse.ArgumentParser (description="Envio de mensajes por WhastApp/web", epilog="@jabaselga")
     
     parser.add_argument("-f", metavar="moviles.xlsx", help="Fichero de Excel con los datos.", type=chek_file)
-    parser.add_argument("-p", help="Enviar contraseña", action="store_true")
+    parser.add_argument("-m", help="Enviar mensaje", action="store_true")
     parser.add_argument("-s", help="Enviar imagen/video/fichero", action="store_true")
     parser.add_argument("-q", metavar="string", help="Quien soy")
     parser.add_argument("-d", help="Simulación, no enviar mensajes ni archivos", action="store_true")
@@ -99,10 +99,10 @@ def main():
     
     args = parser.parse_args()   
     
-    if not (args.p or args.s):
+    if not (args.m or args.s):
         parser.error('Ninguna tarea por hacer.')
 
-    enviar_contraseña = args.p
+    enviar_mensaje = args.m
     enviar_fichero = args.s
 
     if args.f:
@@ -141,21 +141,19 @@ def main():
                
         if pattern.fullmatch(numero):
             
-            if enviar_contraseña:
+            if enviar_mensaje:
 
                 if not args.d:
                     messenger.find_user(numero)
-                    messenger.send_message(f'Enviando contraseña: {mensaje} al numero {numero}')
+                    messenger.send_message(f'Enviando mensaje: -{mensaje}- al numero {numero}')
 
-                print (f'Enviando contraseña: {mensaje} al numero {numero}')
+                print (f'Enviando mensaje: -{mensaje}- al numero {numero}')
 
             if enviar_fichero:
                 # comprobar si ha fichero para enviar y existe
                 # sacar tipo de fichero
                 # enviar segun tipo de fichero
-                #messenger.send_message(f'Enviando mensaje: {mensaje} al numero {numero}')
-                if fichero and os.path.isfile(fichero):
-                    
+                if fichero and os.path.isfile(fichero): 
                     name, ext = os.path.splitext(fichero)
                     
                     if not args.d:
@@ -188,7 +186,10 @@ def main():
         #print (numero, mensaje, fichero)
     t2 = time()
 
-    print (f'{t2-t1}')
+    print (f'El proceso ha durado {t2-t1} segundos.')
 
 if __name__=='__main__':
     main ()
+
+
+
