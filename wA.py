@@ -10,6 +10,7 @@ import gspread
 import re
 import argparse
 import os.path
+import sys
 
 def enviar_xls(messenger, args):
  
@@ -32,7 +33,7 @@ def enviar_xls(messenger, args):
         cell_qsoy    = 'D' + str(i)
         cell_status  = 'G' + str(i)
         numero  = '34' + str(sheet[cell_numero].value)[:]
-        pattern = re.compile("^34\d{9}")
+        pattern = re.compile("^34[67]\d{8}")
         mensaje = sheet[cell_mensaje].value
         fichero = sheet[cell_fichero].value
         qsoy    = sheet[cell_qsoy].value
@@ -49,7 +50,7 @@ def enviar_xls(messenger, args):
 
                 if not args.d:
                     messenger.find_user(numero)
-                    messenger.send_message(f'Enviando mensaje: -{mensaje}- al numero {numero}')
+                    messenger.send_message(mensaje)
 
                 print (f'Enviando mensaje: -{mensaje}- al numero {numero}')
 
@@ -72,7 +73,7 @@ def enviar_xls(messenger, args):
                             messenger.send_file(fichero)
                         print (f'Enviando fichero {fichero} al número: {numero}')
                 else:
-                    print (f'No hay fichero pare enviar al numero {numero}')
+                    print (f'No hay fichero para enviar al numero {numero}')
 
             sheet[cell_status].font = Font(color="00F000")
             sheet[cell_status] = 'Enviado'
@@ -92,9 +93,14 @@ def enviar_google(messenger, args):
     # Abrir gooogle sheet
     gc = gspread.service_account(filename="credentials/ruleta-gui-credentials.json")
     key = open("credentials/key-mobiles.txt").read()
-    sh = gc.open_by_key(key)
-    # Los datos siempre van a estar en la primera hoja
-    worksheet = sh.sheet1
+
+    try:
+        worksheet = gc.open_by_key(key).sheet1
+    except:
+        print ('Error con el fichero de Google Sheet')
+        sys.exit()
+    
+    
     data = worksheet.get_all_values()
     #Leer cabeceras que no necesitamos para nada 
     cabeceras = data.pop(0)
@@ -106,7 +112,7 @@ def enviar_google(messenger, args):
     for i, d in enumerate(data, 2):
         numero, mensaje, fichero, qsoy, *_ = d
         numero = '34' + numero
-        pattern = re.compile("^34\d{9}")
+        pattern = re.compile("^34[67]\d{8}")
    
         if qsoy != args.q and args.q != None :
             print (f"no soy yo {qsoy}")
@@ -116,7 +122,7 @@ def enviar_google(messenger, args):
             if enviar_mensaje:
                 if not args.d:
                     messenger.find_user(numero)
-                    messenger.send_message(f'Enviando mensaje: -{mensaje}- al numero {numero}')
+                    messenger.send_message(mensaje)
                     worksheet.update('G' + str(i), 'Mensaje Enviado')
                     worksheet.format('G' + str(i), {"textFormat": {"foregroundColor": {"red": 0.0, "green": 75.0, "blue": 0.0}}})
 
@@ -145,11 +151,15 @@ def enviar_google(messenger, args):
                             worksheet.format('H' + str(i), {"textFormat": {"foregroundColor": {"red": 0.0, "green": 75.0, "blue": 0.0}}})
                         print (f'Enviando fichero {fichero} al número: {numero}')
                 else:
-                    print (f'No hay fichero pare enviar al numero {numero}')
+                    print (f'No hay fichero para enviar al numero {numero}')
 
         else:
-            worksheet.update('G' + str(i), 'No Enviado')
-            worksheet.format('G' + str(i), {"textFormat": {"foregroundColor": {"red": 50.0, "green": 0.0, "blue": 0.0}}})
+            if not args.d and args.g:
+                worksheet.update('H' + str(i), 'No Enviado')
+                worksheet.format('H' + str(i), {"textFormat": {"foregroundColor": {"red": 50.0, "green": 0.0, "blue": 0.0}}})
+            if not args.d and args.s:
+                worksheet.update('G' + str(i), 'No Enviado')
+                worksheet.format('G' + str(i), {"textFormat": {"foregroundColor": {"red": 50.0, "green": 0.0, "blue": 0.0}}})
             print (f'el numero {numero} es incorrecto')
 
 def check_file(file):
