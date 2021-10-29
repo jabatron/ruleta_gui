@@ -5,6 +5,7 @@ allowing you to send messages, images, video and documents programmatically usin
 
 MODIFICADO (ja):
 He tenido que retocar el XPATH de enviar mensajes porque no los enviaba.
+También he modificado el envio de imagenes por le mismo motivo.
 """
 
 
@@ -111,7 +112,7 @@ class WhatsApp(object):
             (By.XPATH, '//*[@id="app"]/div[1]/div[1]/div[2]/div[2]/span/div[1]/span/div[1]/div/div[2]/div/div[2]/div[2]/div/div/span')))
         sendButton.click()
         
-        time.sleep(3)    
+        time.sleep(12)    
 
     def send_picture(self, picture):
         """send_picture ()
