@@ -176,7 +176,7 @@ def main():
     parser = argparse.ArgumentParser (description="Envio de mensajes por WhastApp/web", epilog="@jabaselga")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("-f",  metavar="moviles.xlsx", help="Fichero de Excel con los datos.", type=check_file)
-    group.add_argument("-g",  help="Fichero de Excel con los datos.", action="store_true")
+    group.add_argument("-g",  help="Fichero de Google con los datos.", action="store_true")
     parser.add_argument("-m", help="Enviar mensaje", action="store_true")
     parser.add_argument("-s", help="Enviar imagen/video/fichero", action="store_true")
     parser.add_argument("-q", metavar="string", help="Quien soy")
