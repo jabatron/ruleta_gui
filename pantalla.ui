@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>722</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="widget_fuente" native="true">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>20</y>
+      <width>321</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <widget class="QRadioButton" name="radioExcel">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>13</y>
+       <width>76</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Usar Excel</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioGS">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>63</y>
+       <width>124</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Usar Google Sheets</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_url_gs">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>89</y>
+       <width>651</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>URL_GS</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="bt_sel_excel">
+     <property name="geometry">
+      <rect>
+       <x>79</x>
+       <y>11</y>
+       <width>75</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Seleccionar</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_file_excel">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>41</y>
+       <width>321</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>ExcelFile</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="widget_tipo" native="true">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>20</y>
+      <width>141</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>13</x>
+       <y>10</y>
+       <width>121</width>
+       <height>48</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QCheckBox" name="cb_enviar_mensaje">
+        <property name="text">
+         <string>Enviar mensaje</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="cb_enviar_fichero">
+        <property name="text">
+         <string>Enviar fichero</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="enviar_mensajes">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>150</y>
+      <width>75</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enviar</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="dryrun">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>150</y>
+      <width>151</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Solo probar/ NO enviar</string>
+    </property>
+   </widget>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>30</y>
+      <width>191</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>0</y>
+       <width>181</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_qsoy">
+        <property name="text">
+         <string>Quien Soy:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="line_quien_soy"/>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QTableWidget" name="tableWidget">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>190</y>
+      <width>661</width>
+      <height>381</height>
+     </rect>
+    </property>
+    <property name="rowCount">
+     <number>20</number>
+    </property>
+    <property name="columnCount">
+     <number>4</number>
+    </property>
+    <attribute name="horizontalHeaderCascadingSectionResizes">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderDefaultSectionSize">
+     <number>155</number>
+    </attribute>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <column>
+     <property name="text">
+      <string>Telefono</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Mensaje</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Fichero</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Estado</string>
+     </property>
+    </column>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

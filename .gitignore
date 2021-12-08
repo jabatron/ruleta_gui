@@ -133,3 +133,5 @@ google sheet.ipynb
 .gitignore
 requiriments.txt
 credentials/key-mobiles.txt
+
+img/
