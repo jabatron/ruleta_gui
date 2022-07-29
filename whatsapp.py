@@ -39,6 +39,11 @@ class WhatsApp(object):
 
     def login(self):
         self.browser.get(self.BASE_URL)
+        action_button = self.wait.until(EC.presence_of_element_located(
+            #    (By.XPATH, '//*[@id="action-button"]')))
+                (By.XPATH, '//*[@id="side"]/div[1]/div/button/div/span')))
+        
+        #time.sleep(2)
         #self.browser.maximize_window()
 
     def get_phone_link(self, mobile) -> str:
@@ -64,11 +69,13 @@ class WhatsApp(object):
             link = self.get_phone_link(mobile)
             self.browser.get(link)
             action_button = self.wait.until(EC.presence_of_element_located(
+            #    (By.XPATH, '//*[@id="action-button"]')))
                 (By.XPATH, '//*[@id="action-button"]')))
             action_button.click()
-            time.sleep(2)
+            time.sleep(1)
             go_to_web = self.wait.until(EC.presence_of_element_located(
-                (By.XPATH, '//*[@id="fallback_block"]/div/div/a')))
+                # (By.XPATH, '//*[@id="fallback_block"]/div/div/a'))) 
+                (By.XPATH, '//*[@id="fallback_block"]/div/div/h4[2]/a'))) 
             go_to_web.click()
             time.sleep(1)
         except UnexpectedAlertPresentException as bug:
@@ -87,7 +94,8 @@ class WhatsApp(object):
             # RETOCADO
             # inp_xpath = '//*[@id="main"]/footer/div[1]/div/div/div[2]/div[1]/div/div[2]'
             # cambio 6/12/2021 
-            inp_xpath = '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[2]'
+            #inp_xpath = '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[2]'
+            inp_xpath = '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]/p'
             input_box = self.wait.until(
                 EC.presence_of_element_located((By.XPATH, inp_xpath)))
             input_box.send_keys(message + Keys.ENTER)
