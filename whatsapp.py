@@ -143,8 +143,15 @@ class WhatsApp(object):
             self.find_attachment()
             # To send an Image
             imgButton = self.wait.until(EC.presence_of_element_located(
-                (By.XPATH, '//*[@id="main"]/footer//*[@data-icon="attach-image"]/../input')))
-            imgButton.send_keys(filename)
+                #(By.XPATH, '//*[@id="main"]/footer//*[@data-icon="attach-image"]/../input')))
+                (By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[1]/div[2]/div/span/div/ul/div/div[2]/li')))
+            imgButton.click()
+            time.sleep(1)
+            pyautogui.hotkey('alt', 'm')
+            pyautogui.write(filename)
+            pyautogui.press('enter')
+
+            time.sleep(1)
             self.send_attachment()
             print(f"Picture has been successfully sent to {self.mobile}")
         except (NoSuchElementException, Exception) as bug:
