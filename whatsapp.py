@@ -12,6 +12,7 @@ También he modificado el envio de imagenes por le mismo motivo.
 import os
 import time
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
@@ -20,6 +21,8 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import UnexpectedAlertPresentException
+
+import pyautogui
 
 
 class WhatsApp(object):
@@ -43,7 +46,7 @@ class WhatsApp(object):
             #    (By.XPATH, '//*[@id="action-button"]')))
                 (By.XPATH, '//*[@id="side"]/div[1]/div/button/div/span')))
         
-        #time.sleep(2)
+        time.sleep(1)
         #self.browser.maximize_window()
 
     def get_phone_link(self, mobile) -> str:
@@ -96,6 +99,7 @@ class WhatsApp(object):
             # cambio 6/12/2021 
             #inp_xpath = '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[2]'
             inp_xpath = '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]/p'
+            #inp_xpath = '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div[2]/div[1]/p'
             input_box = self.wait.until(
                 EC.presence_of_element_located((By.XPATH, inp_xpath)))
             input_box.send_keys(message + Keys.ENTER)
@@ -109,17 +113,19 @@ class WhatsApp(object):
 
     def find_attachment(self):
         clipButton = self.wait.until(EC.presence_of_element_located(
-            (By.XPATH,
-             '//*[@id="main"]/footer//*[@data-icon="clip"]/..')))
+            (By.XPATH,'//*[@id="main"]/footer/div[1]/div/span[2]/div/div[1]/div/div/div/div/span')))
         clipButton.click()
-
+              
     def send_attachment(self):
         # Waiting for the pending clock icon to disappear
         self.wait.until_not(EC.presence_of_element_located(
             (By.XPATH, '//*[@id="main"]//*[@data-icon="msg-time"]')))
 
         sendButton = self.wait.until(EC.presence_of_element_located(
-            (By.XPATH, '//*[@id="app"]/div[1]/div[1]/div[2]/div[2]/span/div[1]/span/div[1]/div/div[2]/div/div[2]/div[2]/div/div/span')))
+            #(By.XPATH, '//*[@id="app"]/div[1]/div[1]/div[2]/div[2]/span/div[1]/span/div[1]/div/div[2]/div/div[2]/div[2]/div/div/span')))
+            (By.XPATH, '//*[@id="app"]/div/div/div[3]/div[2]/span/div/span/div/div/div[2]/div/div[2]/div[2]/div')))
+        
+                        
         sendButton.click()
         
         time.sleep(12)    
@@ -182,9 +188,17 @@ class WhatsApp(object):
         try:
             filename = os.path.realpath(filename)
             self.find_attachment()
-            document_button = self.wait.until(EC.presence_of_element_located(
-                (By.XPATH, '//*[@id="main"]/footer//*[@data-icon="attach-document"]/../input')))
-            document_button.send_keys(filename)
+            #document_button = self.wait.until(EC.presence_of_element_located(
+            #    (By.XPATH, '//*[@id="main"]/footer//*[@data-icon="attach-document"]/../input')))
+            file_button = self.wait.until(EC.presence_of_element_located(
+                (By.XPATH,'//*[@id="main"]/footer/div[1]/div/span[2]/div/div[1]/div/div/span/div/ul/div/div[1]/li')))
+            file_button.click()
+            time.sleep(1)
+            pyautogui.hotkey('alt', 'm')
+            pyautogui.write(filename)
+            pyautogui.press('enter')
+
+            time.sleep(1)
             self.send_attachment()
         except (NoSuchElementException, Exception) as bug:
             print(bug)
