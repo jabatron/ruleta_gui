@@ -98,8 +98,9 @@ class WhatsApp(object):
             # inp_xpath = '//*[@id="main"]/footer/div[1]/div/div/div[2]/div[1]/div/div[2]'
             # cambio 6/12/2021 
             #inp_xpath = '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[2]'
-            inp_xpath = '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]/p'
             #inp_xpath = '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div[2]/div[1]/p'
+            inp_xpath = '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[1]/div/div[1]/p'
+
             input_box = self.wait.until(
                 EC.presence_of_element_located((By.XPATH, inp_xpath)))
             input_box.send_keys(message + Keys.ENTER)
@@ -144,7 +145,9 @@ class WhatsApp(object):
             # To send an Image
             imgButton = self.wait.until(EC.presence_of_element_located(
                 #(By.XPATH, '//*[@id="main"]/footer//*[@data-icon="attach-image"]/../input')))
-                (By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[1]/div[2]/div/span/div/ul/div/div[2]/li')))
+                #(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[1]/div[2]/div/span/div/ul/div/div[2]/li')))
+                        
+                (By.XPATH,'//*[@id="main"]/footer/div[1]/div/span[2]/div/div[1]/div/div/span/div/ul/div/div[2]/li')))
             imgButton.click()
             time.sleep(1)
             pyautogui.hotkey('alt', 'm')
