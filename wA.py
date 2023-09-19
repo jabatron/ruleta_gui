@@ -64,7 +64,7 @@ def enviar_xls(messenger, args):
                     if not args.d:
                         messenger.find_user(numero)
                     
-                    if ext in [".tiff", ".pjp", ".jfif", ".gif", ".svg", ".bmp", ".png", ".jpeg", ".svgz", ".jpg", ".webp", ".ico", ".xbm", ".dib", ".tif", ".pjpeg", ".avif", ".m4v", ".mp4", ".3gpp", ".mov"]:
+                    if ext.lower() in [".tiff", ".pjp", ".jfif", ".gif", ".svg", ".bmp", ".png", ".jpeg", ".svgz", ".jpg", ".webp", ".ico", ".xbm", ".dib", ".tif", ".pjpeg", ".avif", ".m4v", ".mp4", ".3gpp", ".mov"]:
                         if not args.d:
                             messenger.send_picture(fichero)
                         print (f'Enviando imagen/video {fichero} al número: {numero}')
@@ -138,7 +138,7 @@ def enviar_google(messenger, args):
                     if not args.d:
                         messenger.find_user(numero)
                     
-                    if ext in [".tiff", ".pjp", ".jfif", ".gif", ".svg", ".bmp", ".png", ".jpeg", ".svgz", ".jpg", ".webp", ".ico", ".xbm", ".dib", ".tif", ".pjpeg", ".avif", ".m4v", ".mp4", ".3gpp", ".mov"]:
+                    if ext.lower() in [".tiff", ".pjp", ".jfif", ".gif", ".svg", ".bmp", ".png", ".jpeg", ".svgz", ".jpg", ".webp", ".ico", ".xbm", ".dib", ".tif", ".pjpeg", ".avif", ".m4v", ".mp4", ".3gpp", ".mov"]:
                         if not args.d:
                             messenger.send_picture(fichero)
                             worksheet.update('H' + str(i), 'Imagen/Video Enviado')
