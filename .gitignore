@@ -137,3 +137,4 @@ credentials/key-mobiles.txt
 img/
 chromedriver.exe
 .vscode/launch.json
+credentials/ruleta-gui-credentials.json
