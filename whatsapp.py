@@ -146,7 +146,6 @@ class WhatsApp(object):
             imgButton = self.wait.until(EC.presence_of_element_located(
                 #(By.XPATH, '//*[@id="main"]/footer//*[@data-icon="attach-image"]/../input')))
                 #(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[1]/div[2]/div/span/div/ul/div/div[2]/li')))
-                        
                 (By.XPATH,'//*[@id="main"]/footer/div[1]/div/span[2]/div/div[1]/div/div/span/div/ul/div/div[2]/li')))
             imgButton.click()
             time.sleep(1)
