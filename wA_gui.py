@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QHBoxLayout,
     QPushButton, QRadioButton, QSizePolicy, QStatusBar,
     QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
-import whatsapp as w
+import whatsapp2 as w
 from datetime import datetime
 from openpyxl import load_workbook
 from openpyxl.styles import colors

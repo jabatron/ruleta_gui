@@ -1,5 +1,5 @@
 from openpyxl.workbook import workbook
-import whatsapp as w
+import whatsapp2 as w
 from datetime import datetime
 from openpyxl import load_workbook
 from openpyxl.styles import colors
